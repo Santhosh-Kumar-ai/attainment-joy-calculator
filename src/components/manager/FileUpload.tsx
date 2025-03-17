@@ -83,7 +83,12 @@ export const FileUpload = ({
         setCsms(csmsData);
         setIsCalculated(false);
         setIsUploaded(true);
-        scrollToTable();
+        
+        // Use setTimeout to ensure the DOM has updated before scrolling
+        setTimeout(() => {
+          scrollToTable();
+        }, 100);
+        
         toast.success(`Uploaded ${csmsData.length} CSM records`);
       } catch (error) {
         console.error(error);
@@ -138,3 +143,4 @@ export const FileUpload = ({
     </div>
   );
 };
+

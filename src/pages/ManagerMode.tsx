@@ -18,7 +18,7 @@ const ManagerMode = () => {
   
   const scrollToTable = () => {
     if (tableRef.current) {
-      tableRef.current.scrollIntoView({ behavior: 'smooth' });
+      tableRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
   
@@ -103,3 +103,4 @@ const ManagerMode = () => {
 };
 
 export default ManagerMode;
+
