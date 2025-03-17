@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -56,38 +55,25 @@ const RetentionCalculator = () => {
     }
     setIsError(false);
 
-    // Calculate maximum quarterly churn allowed for minimum retention target
     const maxAllowedChurn = bookARR * (1 - Math.pow(minRetention, 1 / 12));
     setMaxQuarterlyChurn(maxAllowedChurn);
 
-    // Calculate quarterly churn target for maximum retention target
     const churnTarget = bookARR * (1 - Math.pow(maxRetention, 1 / 12));
     setQuarterlyChurnTarget(churnTarget);
 
-    // Calculate retention rate
     const retention = (bookARR - churnARR) / bookARR;
     const annualRetention = Math.pow(retention, 12);
     setRetentionRate(annualRetention);
 
-    // Calculate attainment based on new requirements:
-    // 1. 150% attainment when Retention Rate is 100%
-    // 2. 100% attainment when Retention Rate meets Maximum Retention Target
-    // 3. 0% attainment when Retention Rate is <= Minimum Retention Target
-    // 4. Linear scale between points
-
     let calculatedAttainment = 0;
     if (annualRetention === 1) {
-      // Case 1: 150% attainment when retention rate is 100%
       calculatedAttainment = 1.5;
     } else if (annualRetention <= minRetention) {
-      // Case 3: 0% attainment when retention rate <= minimum target
       calculatedAttainment = 0;
     } else if (annualRetention <= maxRetention) {
-      // Linear scale from 0% to 100% between min and max targets
       const ratio = (annualRetention - minRetention) / (maxRetention - minRetention);
       calculatedAttainment = ratio;
     } else if (annualRetention < 1) {
-      // Linear scale from 100% to 150% between max target and 100% retention
       const ratio = (annualRetention - maxRetention) / (1 - maxRetention);
       calculatedAttainment = 1 + ratio * 0.5;
     }
@@ -152,12 +138,14 @@ const RetentionCalculator = () => {
                   label="Retention Target" 
                   value={maxRetention} 
                   onChange={setMaxRetention} 
+                  tooltip="The higher target % for 100% attainment" 
                   isPercentage 
                 />
                 <RetentionSliderInput 
                   label="Minimum Retention Target" 
                   value={minRetention} 
                   onChange={setMinRetention} 
+                  tooltip="The lower threshold target % at which the attainment becomes 0%" 
                   isPercentage 
                 />
                 <RetentionSliderInput 

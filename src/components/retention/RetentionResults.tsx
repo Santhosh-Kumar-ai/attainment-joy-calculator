@@ -37,7 +37,7 @@ export const RetentionResults = ({
           <span className="text-sm font-medium text-[#7E69AB]">
             Retention Rate
           </span>
-          <p className="text-4xl font-semibold tracking-tight text-[#8B5CF6]">
+          <p className="text-xl font-semibold tracking-tight text-[#1A1F2C]">
             {isError ? '—' : formatPercentage(retentionRate)}
           </p>
         </div>
