@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -41,27 +42,77 @@ const RetentionCalculator = () => {
   const [isError, setIsError] = useState(false);
   const [maxQuarterlyChurn, setMaxQuarterlyChurn] = useState<number>(0);
   const [quarterlyChurnTarget, setQuarterlyChurnTarget] = useState<number>(0);
+  
+  // Add flags to track user interaction
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const initialRenderRef = useRef(true);
+
+  // Wrapper functions for setters to mark user interaction
+  const handleMinRetentionChange = (value: number) => {
+    setMinRetention(value);
+    setHasUserInteracted(true);
+  };
+
+  const handleMaxRetentionChange = (value: number) => {
+    setMaxRetention(value);
+    setHasUserInteracted(true);
+  };
+
+  const handleBookARRChange = (value: number) => {
+    setBookARR(value);
+    setHasUserInteracted(true);
+  };
+
+  const handleChurnARRChange = (value: number) => {
+    setChurnARR(value);
+    setHasUserInteracted(true);
+  };
 
   useEffect(() => {
-    if (churnARR >= bookARR) {
-      setIsError(true);
-      toast.error("Churn ARR cannot exceed or equal Book Start ARR");
+    // Skip validation on initial render
+    if (initialRenderRef.current) {
+      initialRenderRef.current = false;
+      // Calculate values without showing errors
+      calculateValues();
       return;
     }
-    if (minRetention >= maxRetention) {
-      setIsError(true);
-      toast.error("Minimum retention target cannot exceed maximum retention target");
-      return;
-    }
-    setIsError(false);
 
+    // Only show errors after user has interacted with the form
+    if (hasUserInteracted) {
+      validateAndCalculate();
+    } else {
+      calculateValues();
+    }
+  }, [bookARR, churnARR, minRetention, maxRetention, hasUserInteracted]);
+
+  const validateAndCalculate = () => {
+    let validationError = false;
+    
+    if (churnARR >= bookARR && bookARR > 0) {
+      validationError = true;
+      toast.error("Churn ARR cannot exceed or equal Book Start ARR");
+    }
+    
+    if (minRetention >= maxRetention && (minRetention > 0 || maxRetention > 0)) {
+      validationError = true;
+      toast.error("Minimum retention target cannot exceed maximum retention target");
+    }
+    
+    setIsError(validationError);
+    
+    if (!validationError) {
+      calculateValues();
+    }
+  };
+
+  const calculateValues = () => {
     const maxAllowedChurn = bookARR * (1 - Math.pow(minRetention, 1 / 12));
     setMaxQuarterlyChurn(maxAllowedChurn);
 
     const churnTarget = bookARR * (1 - Math.pow(maxRetention, 1 / 12));
     setQuarterlyChurnTarget(churnTarget);
 
-    const retention = (bookARR - churnARR) / bookARR;
+    const retention = bookARR === 0 ? 0 : (bookARR - churnARR) / bookARR;
     const annualRetention = Math.pow(retention, 12);
     setRetentionRate(annualRetention);
 
@@ -78,7 +129,7 @@ const RetentionCalculator = () => {
       calculatedAttainment = 1 + ratio * 0.5;
     }
     setAttainment(calculatedAttainment);
-  }, [bookARR, churnARR, minRetention, maxRetention]);
+  };
 
   useEffect(() => {
     const dataToStore: StoredRetentionData = {
@@ -130,28 +181,28 @@ const RetentionCalculator = () => {
                 <RetentionSliderInput 
                   label="Book Start ARR" 
                   value={bookARR} 
-                  onChange={setBookARR} 
+                  onChange={handleBookARRChange} 
                   tooltip="Sum of book start ARR of all three months in the quarter" 
                   max={50000000} 
                 />
                 <RetentionSliderInput 
                   label="Retention Target" 
                   value={maxRetention} 
-                  onChange={setMaxRetention} 
+                  onChange={handleMaxRetentionChange} 
                   tooltip="The higher target % for 100% attainment" 
                   isPercentage 
                 />
                 <RetentionSliderInput 
                   label="Minimum Retention Target" 
                   value={minRetention} 
-                  onChange={setMinRetention} 
+                  onChange={handleMinRetentionChange} 
                   tooltip="The lower threshold target % at which the attainment becomes 0%" 
                   isPercentage 
                 />
                 <RetentionSliderInput 
                   label="Churn ARR" 
                   value={churnARR} 
-                  onChange={setChurnARR} 
+                  onChange={handleChurnARRChange} 
                   tooltip="Sum of Churn ARR of all three months in the quarter" 
                   max={50000000} 
                   isError={isError} 
