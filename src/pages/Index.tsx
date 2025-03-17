@@ -93,28 +93,30 @@ const Index = () => {
           }} transition={{
             duration: 0.5,
             delay: 0.1
-          }} className="text-4xl md:text-6xl font-bold text-gray-900 tracking-tight max-w-4xl mx-auto">
-              Calculate Your{" "}
-              <span className="relative inline-flex overflow-hidden">
-                <span className="invisible">Commission</span>
-                <AnimatePresence mode="wait">
-                  {titles.map((title, index) => (
-                    titleNumber === index && (
-                      <motion.span
-                        key={index}
-                        className="absolute left-0 bg-clip-text text-transparent bg-gradient-to-r from-[#8B5CF6] to-[#9b87f5]"
-                        initial={{ y: 50, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -50, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {title}
-                      </motion.span>
-                    )
-                  ))}
-                </AnimatePresence>
+          }} className="text-4xl md:text-6xl font-bold text-gray-900 tracking-tight max-w-4xl mx-auto flex flex-col">
+              <span>
+                Calculate Your{" "}
+                <span className="relative inline-flex overflow-hidden">
+                  <span className="invisible">Commission</span>
+                  <AnimatePresence mode="wait">
+                    {titles.map((title, index) => (
+                      titleNumber === index && (
+                        <motion.span
+                          key={index}
+                          className="absolute left-0 bg-clip-text text-transparent bg-gradient-to-r from-[#8B5CF6] to-[#9b87f5]"
+                          initial={{ y: 50, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          exit={{ y: -50, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {title}
+                        </motion.span>
+                      )
+                    ))}
+                  </AnimatePresence>
+                </span>
               </span>
-              {" "}<span className="text-gray-900">In Minutes</span>
+              <span className="text-gray-900">In Minutes</span>
             </motion.h1>
             
             <motion.p initial={{
@@ -150,7 +152,6 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Floating calculator illustration */}
         <motion.div initial={{
         opacity: 0,
         y: 50
@@ -196,7 +197,6 @@ const Index = () => {
         </motion.div>
       </section>
       
-      {/* Features Section */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -236,7 +236,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Product Screenshots Carousel */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -249,7 +248,6 @@ const Index = () => {
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
             <div className="p-6 md:p-8">
               <div className="relative">
-                {/* Carousel items - placeholder for now */}
                 <div className="aspect-[16/9] bg-gradient-to-b from-gray-50 to-white rounded-xl overflow-hidden relative">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6 border border-gray-100">
@@ -317,7 +315,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-[#9b87f5]/10 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center space-y-8">
@@ -336,7 +333,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Footer */}
       <footer className="bg-white border-t border-gray-100 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
@@ -370,3 +366,4 @@ const Index = () => {
     </div>;
 };
 export default Index;
+
