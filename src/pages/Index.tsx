@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Check, Calculator, ChartBarIcon, DollarSign, PieChart, RefreshCw } from "lucide-react";
@@ -44,7 +45,7 @@ const carouselItems = [{
 const Index = () => {
   const [titleNumber, setTitleNumber] = useState(0);
   const titles = useMemo(
-    () => ["Retention", "Commission", "Attainment"],
+    () => ["Retention", "Expansion", "Commission"],
     []
   );
 
