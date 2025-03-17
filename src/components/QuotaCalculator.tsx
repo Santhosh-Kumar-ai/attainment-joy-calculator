@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -7,6 +8,7 @@ import { RetentionSliderInput } from "./retention/RetentionSliderInput";
 import { MixRatioSelect } from "./quota/MixRatioSelect";
 import { QuotaMixSelect } from "./quota/QuotaMixSelect";
 import { VariableBreakdown } from "./quota/VariableBreakdown";
+
 interface StoredData {
   role: 'CSM' | 'AM';
   ctc: number;
@@ -17,6 +19,7 @@ interface StoredData {
   customRetention: string;
   customExpansion: string;
 }
+
 const QuotaCalculator = () => {
   const [role, setRole] = useState<'CSM' | 'AM'>(() => {
     const stored = localStorage.getItem('quotaCalculator');
@@ -24,19 +27,19 @@ const QuotaCalculator = () => {
   });
   const [ctc, setCTC] = useState<number>(() => {
     const stored = localStorage.getItem('quotaCalculator');
-    return stored ? (JSON.parse(stored) as StoredData).ctc : 1200000;
+    return stored ? (JSON.parse(stored) as StoredData).ctc : 0;
   });
   const [mixRatio, setMixRatio] = useState<string>(() => {
     const stored = localStorage.getItem('quotaCalculator');
-    return stored ? (JSON.parse(stored) as StoredData).mixRatio : "75/25";
+    return stored ? (JSON.parse(stored) as StoredData).mixRatio : "80/20";
   });
   const [customFixed, setCustomFixed] = useState<string>(() => {
     const stored = localStorage.getItem('quotaCalculator');
-    return stored ? (JSON.parse(stored) as StoredData).customFixed : "75";
+    return stored ? (JSON.parse(stored) as StoredData).customFixed : "80";
   });
   const [customVariable, setCustomVariable] = useState<string>(() => {
     const stored = localStorage.getItem('quotaCalculator');
-    return stored ? (JSON.parse(stored) as StoredData).customVariable : "25";
+    return stored ? (JSON.parse(stored) as StoredData).customVariable : "20";
   });
   const [quotaMix, setQuotaMix] = useState<string>(() => {
     const stored = localStorage.getItem('quotaCalculator');
@@ -50,6 +53,7 @@ const QuotaCalculator = () => {
     const stored = localStorage.getItem('quotaCalculator');
     return stored ? (JSON.parse(stored) as StoredData).customExpansion : "30";
   });
+
   useEffect(() => {
     const dataToStore: StoredData = {
       role,
@@ -63,27 +67,30 @@ const QuotaCalculator = () => {
     };
     localStorage.setItem('quotaCalculator', JSON.stringify(dataToStore));
   }, [role, ctc, mixRatio, customFixed, customVariable, quotaMix, customRetention, customExpansion]);
+
   const getVariablePercentage = () => {
     if (mixRatio.startsWith('custom_')) {
       return parseFloat(customVariable);
     }
     return parseInt(mixRatio.split('/')[1]);
   };
+
   const getRetentionPercentage = () => {
     if (quotaMix.startsWith('custom_')) {
       return parseFloat(customRetention) / 100;
     }
     return parseInt(quotaMix.split('/')[0]) / 100;
   };
+
   const getExpansionPercentage = () => {
     if (quotaMix.startsWith('custom_')) {
       return parseFloat(customExpansion) / 100;
     }
     return parseInt(quotaMix.split('/')[1]) / 100;
   };
+
   const variableComponent = Math.round(ctc * getVariablePercentage() / 100);
 
-  // Create role options for select component
   const roleOptions = [{
     value: 'CSM',
     label: 'CSM'
@@ -92,6 +99,7 @@ const QuotaCalculator = () => {
     label: 'AM [Coming Soon!]',
     disabled: true
   }];
+
   return <div className="min-h-screen bg-gradient-to-b from-white to-[#9b87f5]/5">
       <Header />
       <div className="py-12">
@@ -129,9 +137,6 @@ const QuotaCalculator = () => {
             delay: 0.2
           }} className="space-y-8">
               <div className="space-y-6">
-                {/* Role Selection */}
-                
-                
                 <RetentionSliderInput label="Total CTC (₹)" value={ctc} onChange={setCTC} tooltip="Fixed+Variable Compensation" max={10000000} useINR={true} />
                 
                 <MixRatioSelect mixRatio={mixRatio} onMixRatioChange={setMixRatio} customFixed={customFixed} customVariable={customVariable} onCustomFixedChange={setCustomFixed} onCustomVariableChange={setCustomVariable} />
@@ -150,4 +155,5 @@ const QuotaCalculator = () => {
       </div>
     </div>;
 };
+
 export default QuotaCalculator;

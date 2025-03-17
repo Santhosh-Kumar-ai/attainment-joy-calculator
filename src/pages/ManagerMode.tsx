@@ -8,10 +8,12 @@ import { FileOperations } from "@/components/manager/FileOperations";
 import { CSMTable } from "@/components/manager/CSMTable";
 import { CalculationControls } from "@/components/manager/CalculationControls";
 import { InfoSection } from "@/components/manager/InfoSection";
+import { Info } from "lucide-react";
 
 const ManagerMode = () => {
   const [csms, setCsms] = useState<CSMData[]>([]);
   const [isCalculated, setIsCalculated] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
   
   const scrollToTable = () => {
@@ -53,6 +55,8 @@ const ManagerMode = () => {
             setCsms={setCsms}
             setIsCalculated={setIsCalculated}
             scrollToTable={scrollToTable}
+            csms={csms}
+            setIsUploaded={setIsUploaded}
           />
           
           {csms.length > 0 && (
@@ -70,6 +74,16 @@ const ManagerMode = () => {
                 setCsms={setCsms}
               />
               
+              {/* Disclaimer */}
+              {isUploaded && (
+                <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 flex items-start gap-3">
+                  <Info className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-amber-700">
+                    Refreshing the page will erase all data.
+                  </p>
+                </div>
+              )}
+              
               {/* CSM Data Table */}
               <CSMTable 
                 csms={csms} 
@@ -80,8 +94,6 @@ const ManagerMode = () => {
               {isCalculated && (
                 <InfoSection />
               )}
-              
-              
             </motion.div>
           )}
         </div>

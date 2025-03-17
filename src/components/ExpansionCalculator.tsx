@@ -15,12 +15,12 @@ interface StoredExpansionData {
 const ExpansionCalculator = () => {
   const [targetARR, setTargetARR] = useState<number>(() => {
     const stored = localStorage.getItem('expansionCalculator');
-    return stored ? (JSON.parse(stored) as StoredExpansionData).targetARR : 100000;
+    return stored ? (JSON.parse(stored) as StoredExpansionData).targetARR : 0;
   });
 
   const [expansionARR, setExpansionARR] = useState<number>(() => {
     const stored = localStorage.getItem('expansionCalculator');
-    return stored ? (JSON.parse(stored) as StoredExpansionData).expansionARR : 100000;
+    return stored ? (JSON.parse(stored) as StoredExpansionData).expansionARR : 0;
   });
 
   const [acceleratedARR, setAcceleratedARR] = useState<number>(0);
@@ -28,6 +28,13 @@ const ExpansionCalculator = () => {
 
   useEffect(() => {
     const calculateAcceleratedARR = () => {
+      // If targetARR is 0, set attainment to 0 to avoid NaN
+      if (targetARR === 0) {
+        setAcceleratedARR(0);
+        setAttainment(0);
+        return;
+      }
+
       const ratio = expansionARR / targetARR;
       let acceleratedValue = 0;
 
@@ -69,6 +76,12 @@ const ExpansionCalculator = () => {
     } else {
       return `Base ($${targetARR.toLocaleString()}) @ 1x\nNext $${targetARR.toLocaleString()} @ 1.5x\nRemaining ($${(expansionARR - 2 * targetARR).toLocaleString()}) @ 1x`;
     }
+  };
+
+  // Format percentage to display "-" when the value is 0
+  const formatAttainmentPercentage = () => {
+    if (targetARR === 0) return "-";
+    return `${(attainment * 100).toFixed(1)}%`;
   };
 
   return (
@@ -160,7 +173,7 @@ const ExpansionCalculator = () => {
                       Attainment
                     </span>
                     <p className="text-4xl font-semibold tracking-tight text-[#8B5CF6]">
-                      {(attainment * 100).toFixed(1)}%
+                      {formatAttainmentPercentage()}
                     </p>
                   </div>
                 </div>

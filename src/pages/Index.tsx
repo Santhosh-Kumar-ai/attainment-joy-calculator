@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Check, Calculator, ChartBarIcon, DollarSign, PieChart, RefreshCw } from "lucide-react";
 import { Header } from "@/components/Header";
+import { useState, useEffect, useMemo } from "react";
+
 const features = [{
   title: "Retention Calculation",
   description: "Calculate your retention targets, rates, and attainment based on Book Start ARR and Churn ARR",
@@ -38,7 +40,25 @@ const carouselItems = [{
   description: "See your total commission based on attainment and quota credits",
   image: "/commission-calculator.png" // This will use a placeholder for now
 }];
+
 const Index = () => {
+  const [titleNumber, setTitleNumber] = useState(0);
+  const titles = useMemo(
+    () => ["Retention", "Commission", "Attainment"],
+    []
+  );
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (titleNumber === titles.length - 1) {
+        setTitleNumber(0);
+      } else {
+        setTitleNumber(titleNumber + 1);
+      }
+    }, 2000);
+    return () => clearTimeout(timeoutId);
+  }, [titleNumber, titles]);
+
   return <div className="min-h-screen bg-white">
       <Header />
       
@@ -74,7 +94,27 @@ const Index = () => {
             duration: 0.5,
             delay: 0.1
           }} className="text-4xl md:text-6xl font-bold text-gray-900 tracking-tight max-w-4xl mx-auto">
-              Calculate Your Commissions <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#8B5CF6] to-[#9b87f5]">In Minutes</span>
+              Calculate Your{" "}
+              <span className="relative inline-flex overflow-hidden">
+                <span className="invisible">Commission</span>
+                <AnimatePresence mode="wait">
+                  {titles.map((title, index) => (
+                    titleNumber === index && (
+                      <motion.span
+                        key={index}
+                        className="absolute left-0 bg-clip-text text-transparent bg-gradient-to-r from-[#8B5CF6] to-[#9b87f5]"
+                        initial={{ y: 50, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -50, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {title}
+                      </motion.span>
+                    )
+                  ))}
+                </AnimatePresence>
+              </span>
+              {" "}<span className="text-gray-900">In Minutes</span>
             </motion.h1>
             
             <motion.p initial={{

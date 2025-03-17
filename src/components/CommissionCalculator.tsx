@@ -98,6 +98,11 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
             setExpansionARR(expansionARR);
             setTargetARR(targetARR);
 
+            if (!targetARR || targetARR === 0) {
+              setExpansionAttainment(0);
+              return;
+            }
+
             const ratio = expansionARR / targetARR;
             let attainment = 0;
             if (ratio <= 1) {
@@ -117,6 +122,8 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
             console.error("Error parsing expansion data:", error);
             setExpansionAttainment(0);
           }
+        } else {
+          setExpansionAttainment(0);
         }
       };
       const loadQuotaData = () => {
@@ -195,9 +202,15 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
 
   useEffect(() => {
     const retCommission = variableComponent * retentionPercent * retentionAttainment;
-    const expCommission = variableComponent * expansionPercent * expansionAttainment;
+    
+    let expCommission = variableComponent * expansionPercent * expansionAttainment;
+    if (isNaN(expCommission)) {
+      expCommission = 0;
+    }
+    
     const addCredits = quotaCredits.reduce((sum, credit) => sum + credit.amount, 0);
     const total = retCommission + expCommission + addCredits;
+    
     setRetentionCommission(retCommission);
     setExpansionCommission(expCommission);
     setAdditionalCredits(addCredits);
@@ -470,7 +483,7 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
                 <div className="grid grid-cols-6 gap-4">
                   <div className="col-span-4">
                     <label className="text-sm font-medium text-[#1A1F2C]">Credit Name</label>
-                    <Input value={newCreditName} onChange={e => setNewCreditName(e.target.value)} placeholder="e.g., Bonus, Achievement Award" className="w-full mt-1" />
+                    <Input value={newCreditName} onChange={e => setNewCreditName(e.target.value)} placeholder="e.g., Bonus, Achievement Award, SPIFF" className="w-full mt-1" />
                   </div>
                   <div className="col-span-2">
                     <label className="text-sm font-medium text-[#1A1F2C]">Amount (₹)</label>
@@ -481,7 +494,7 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
                   <Plus className="w-4 h-4 mr-2" /> Add Credit ({quotaCredits.length}/5)
                 </Button>
               </div>
-
+              
               {quotaCredits.length > 0 && <div className="rounded-xl border border-[#D6BCFA] bg-white p-6 space-y-4">
                   <h2 className="text-lg font-medium text-[#1A1F2C]">Quota Credits</h2>
                   <div className="space-y-2">
@@ -575,7 +588,6 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
                   All calculations are indicative and needs to be verified with relevant financial stakeholders for actuals.
                 </p>
               </div>
-              
               
             </motion.div>
           </div>

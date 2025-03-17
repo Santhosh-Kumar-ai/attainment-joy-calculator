@@ -27,18 +27,18 @@ export const RetentionResults = ({
       <div className="text-center space-y-6">
         <div className="space-y-2">
           <span className="text-sm font-medium text-[#7E69AB]">
-            Retention Rate
+            Attainment
           </span>
           <p className="text-5xl font-semibold tracking-tight text-[#8B5CF6]">
-            {isError ? '—' : formatPercentage(retentionRate)}
+            {isError ? '—' : formatPercentage(attainment)}
           </p>
         </div>
         <div className="space-y-2">
           <span className="text-sm font-medium text-[#7E69AB]">
-            Attainment
+            Retention Rate
           </span>
           <p className="text-4xl font-semibold tracking-tight text-[#8B5CF6]">
-            {isError ? '—' : formatPercentage(attainment)}
+            {isError ? '—' : formatPercentage(retentionRate)}
           </p>
         </div>
         

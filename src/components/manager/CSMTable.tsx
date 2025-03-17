@@ -9,6 +9,11 @@ interface CSMTableProps {
 }
 
 export const CSMTable = ({ csms, isCalculated }: CSMTableProps) => {
+  // Check if any CSM has churn ARR data
+  const hasChurnData = csms.some(csm => csm.churnARR !== undefined);
+  // Check if any CSM has retention metrics calculated
+  const hasRetentionMetrics = csms.some(csm => csm.retentionRate !== undefined);
+
   return (
     <div className="rounded-xl border overflow-hidden">
       <div className="overflow-x-auto">
@@ -19,10 +24,19 @@ export const CSMTable = ({ csms, isCalculated }: CSMTableProps) => {
               <TableHead className="text-right">Book Start ARR</TableHead>
               <TableHead className="text-right">Min Retention</TableHead>
               <TableHead className="text-right">Max Retention</TableHead>
+              {hasChurnData && (
+                <TableHead className="text-right">Churn ARR</TableHead>
+              )}
               {isCalculated && (
                 <>
-                  <TableHead className="text-right">Max Quarterly Churn</TableHead>
-                  <TableHead className="text-right">Quarterly Churn Target</TableHead>
+                  <TableHead className="text-right font-bold bg-[#9b87f5]/5">Max Quarterly Churn</TableHead>
+                  <TableHead className="text-right font-bold bg-[#9b87f5]/5">Quarterly Churn Target</TableHead>
+                  {hasRetentionMetrics && (
+                    <>
+                      <TableHead className="text-right">Retention Rate</TableHead>
+                      <TableHead className="text-right font-bold bg-[#9b87f5]/5">Attainment</TableHead>
+                    </>
+                  )}
                 </>
               )}
             </TableRow>
@@ -34,10 +48,23 @@ export const CSMTable = ({ csms, isCalculated }: CSMTableProps) => {
                 <TableCell className="text-right">{formatUSD(csm.bookStartARR)}</TableCell>
                 <TableCell className="text-right">{formatPercentage(csm.minRetentionTarget)}</TableCell>
                 <TableCell className="text-right">{formatPercentage(csm.maxRetentionTarget)}</TableCell>
+                {hasChurnData && (
+                  <TableCell className="text-right">{csm.churnARR !== undefined ? formatUSD(csm.churnARR) : "-"}</TableCell>
+                )}
                 {isCalculated && (
                   <>
-                    <TableCell className="text-right">{formatUSD(csm.maxQuarterlyChurnAllowed!)}</TableCell>
-                    <TableCell className="text-right">{formatUSD(csm.quarterlyChurnTarget!)}</TableCell>
+                    <TableCell className="text-right font-medium bg-[#9b87f5]/5">{formatUSD(csm.maxQuarterlyChurnAllowed!)}</TableCell>
+                    <TableCell className="text-right font-medium bg-[#9b87f5]/5">{formatUSD(csm.quarterlyChurnTarget!)}</TableCell>
+                    {hasRetentionMetrics && (
+                      <>
+                        <TableCell className="text-right">
+                          {csm.retentionRate !== undefined ? formatPercentage(csm.retentionRate) : "-"}
+                        </TableCell>
+                        <TableCell className="text-right font-medium bg-[#9b87f5]/5">
+                          {csm.attainment !== undefined ? formatPercentage(csm.attainment) : "-"}
+                        </TableCell>
+                      </>
+                    )}
                   </>
                 )}
               </TableRow>

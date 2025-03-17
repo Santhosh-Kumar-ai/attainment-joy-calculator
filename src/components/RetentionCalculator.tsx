@@ -19,22 +19,22 @@ interface StoredRetentionData {
 const RetentionCalculator = () => {
   const [minRetention, setMinRetention] = useState<number>(() => {
     const stored = localStorage.getItem('retentionCalculator');
-    return stored ? (JSON.parse(stored) as StoredRetentionData).minRetention : 0.75;
+    return stored ? (JSON.parse(stored) as StoredRetentionData).minRetention : 0;
   });
 
   const [maxRetention, setMaxRetention] = useState<number>(() => {
     const stored = localStorage.getItem('retentionCalculator');
-    return stored ? (JSON.parse(stored) as StoredRetentionData).maxRetention : 0.85;
+    return stored ? (JSON.parse(stored) as StoredRetentionData).maxRetention : 0;
   });
 
   const [bookARR, setBookARR] = useState<number>(() => {
     const stored = localStorage.getItem('retentionCalculator');
-    return stored ? (JSON.parse(stored) as StoredRetentionData).bookARR : 500000;
+    return stored ? (JSON.parse(stored) as StoredRetentionData).bookARR : 0;
   });
 
   const [churnARR, setChurnARR] = useState<number>(() => {
     const stored = localStorage.getItem('retentionCalculator');
-    return stored ? (JSON.parse(stored) as StoredRetentionData).churnARR : 50000;
+    return stored ? (JSON.parse(stored) as StoredRetentionData).churnARR : 0;
   });
 
   const [retentionRate, setRetentionRate] = useState<number>(0);
@@ -149,15 +149,15 @@ const RetentionCalculator = () => {
                   max={50000000} 
                 />
                 <RetentionSliderInput 
-                  label="Minimum Retention Target" 
-                  value={minRetention} 
-                  onChange={setMinRetention} 
+                  label="Retention Target" 
+                  value={maxRetention} 
+                  onChange={setMaxRetention} 
                   isPercentage 
                 />
                 <RetentionSliderInput 
-                  label="Maximum Retention Target" 
-                  value={maxRetention} 
-                  onChange={setMaxRetention} 
+                  label="Minimum Retention Target" 
+                  value={minRetention} 
+                  onChange={setMinRetention} 
                   isPercentage 
                 />
                 <RetentionSliderInput 
