@@ -201,9 +201,12 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
   }, []);
 
   useEffect(() => {
-    const retCommission = variableComponent * retentionPercent * retentionAttainment;
+    const quarterlyRetention = variableComponent * retentionPercent;
+    const quarterlyExpansion = variableComponent * expansionPercent;
     
-    let expCommission = variableComponent * expansionPercent * expansionAttainment;
+    const retCommission = quarterlyRetention * retentionAttainment;
+    
+    let expCommission = quarterlyExpansion * expansionAttainment;
     if (isNaN(expCommission)) {
       expCommission = 0;
     }
@@ -597,3 +600,4 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
 };
 
 export default CommissionCalculator;
+

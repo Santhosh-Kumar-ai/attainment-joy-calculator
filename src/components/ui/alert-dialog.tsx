@@ -42,7 +42,7 @@ const AlertDialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <AlertDialogPrimitive.Cancel className="absolute right-4 top-4 rounded-sm opacity-100 ring-offset-background transition-opacity hover:opacity-70 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none bg-gray-100 p-1">
+      <AlertDialogPrimitive.Cancel className="absolute right-4 top-4 rounded-sm opacity-100 ring-offset-background transition-opacity hover:opacity-70 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none bg-gray-200 p-2">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </AlertDialogPrimitive.Cancel>

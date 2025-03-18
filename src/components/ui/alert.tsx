@@ -1,5 +1,7 @@
+
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -21,14 +23,25 @@ const alertVariants = cva(
 
 const Alert = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
->(({ className, variant, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants> & { onClose?: () => void }
+>(({ className, variant, onClose, ...props }, ref) => (
   <div
     ref={ref}
     role="alert"
-    className={cn(alertVariants({ variant }), className)}
+    className={cn(alertVariants({ variant }), className, "pr-10")}
     {...props}
-  />
+  >
+    {onClose && (
+      <button 
+        onClick={onClose}
+        className="absolute right-2 top-2 rounded-sm p-2 opacity-100 bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors"
+      >
+        <X className="h-4 w-4" />
+        <span className="sr-only">Close</span>
+      </button>
+    )}
+    {props.children}
+  </div>
 ))
 Alert.displayName = "Alert"
 
