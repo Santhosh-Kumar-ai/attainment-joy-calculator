@@ -12,7 +12,7 @@ export const VariableBreakdown = ({
   retentionPercent,
   expansionPercent
 }: VariableBreakdownProps) => {
-  // Use raw values for calculations
+  // Use raw values for calculations without rounding
   const quarterlyVariable = variableComponent / 4;
   const quarterlyRetention = quarterlyVariable * retentionPercent;
   const quarterlyExpansion = quarterlyVariable * expansionPercent;

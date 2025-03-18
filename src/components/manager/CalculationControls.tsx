@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Printer, FileSpreadsheet, Calculator } from "lucide-react";
 import { CSMData } from "@/types/manager";
@@ -21,10 +22,12 @@ export const CalculationControls = ({
   const calculateAllMetrics = () => {
     const calculatedCsms = csms.map(csm => {
       // Calculate maximum quarterly churn allowed for minimum retention target
-      const maxAllowedChurn = csm.bookStartARR * (1 - Math.pow(csm.minRetentionTarget, 1 / 12));
+      // Use raw decimal values without rounding
+      const maxAllowedChurn = csm.bookStartARR * (1 - Math.pow(csm.minRetentionTarget, 1/12));
       
       // Calculate quarterly churn target for maximum retention target
-      const churnTarget = csm.bookStartARR * (1 - Math.pow(csm.maxRetentionTarget, 1 / 12));
+      // Use raw decimal values without rounding
+      const churnTarget = csm.bookStartARR * (1 - Math.pow(csm.maxRetentionTarget, 1/12));
 
       // Base calculation without attainment
       const result = {
@@ -35,15 +38,12 @@ export const CalculationControls = ({
       
       // If churn ARR is provided, calculate retention rate and attainment
       if (csm.churnARR !== undefined && csm.churnARR > 0) {
-        // Calculate retention rate
+        // Calculate retention rate - use raw decimal values
         const retention = (csm.bookStartARR - csm.churnARR) / csm.bookStartARR;
         const annualRetention = Math.pow(retention, 12);
         
         // Calculate attainment based on the same logic as in RetentionCalculator:
-        // 1. 150% attainment when Retention Rate is 100%
-        // 2. 100% attainment when Retention Rate meets Maximum Retention Target
-        // 3. 0% attainment when Retention Rate is <= Minimum Retention Target
-        // 4. Linear scale between points
+        // Use raw decimal values throughout the calculation
         let calculatedAttainment = 0;
         
         if (annualRetention === 1) {
