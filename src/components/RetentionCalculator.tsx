@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -14,6 +13,10 @@ interface StoredRetentionData {
   maxRetention: number;
   bookARR: number;
   churnARR: number;
+  retentionRate: number;
+  attainment: number;
+  maxQuarterlyChurn: number;
+  quarterlyChurnTarget: number;
 }
 
 const RetentionCalculator = () => {
@@ -37,17 +40,31 @@ const RetentionCalculator = () => {
     return stored ? (JSON.parse(stored) as StoredRetentionData).churnARR : 0;
   });
 
-  const [retentionRate, setRetentionRate] = useState<number>(0);
-  const [attainment, setAttainment] = useState<number>(0);
+  const [retentionRate, setRetentionRate] = useState<number>(() => {
+    const stored = localStorage.getItem('retentionCalculator');
+    return stored ? (JSON.parse(stored) as StoredRetentionData).retentionRate : 0;
+  });
+
+  const [attainment, setAttainment] = useState<number>(() => {
+    const stored = localStorage.getItem('retentionCalculator');
+    return stored ? (JSON.parse(stored) as StoredRetentionData).attainment : 0;
+  });
+
   const [isError, setIsError] = useState(false);
-  const [maxQuarterlyChurn, setMaxQuarterlyChurn] = useState<number>(0);
-  const [quarterlyChurnTarget, setQuarterlyChurnTarget] = useState<number>(0);
-  
-  // Add flags to track user interaction
+
+  const [maxQuarterlyChurn, setMaxQuarterlyChurn] = useState<number>(() => {
+    const stored = localStorage.getItem('retentionCalculator');
+    return stored ? (JSON.parse(stored) as StoredRetentionData).maxQuarterlyChurn : 0;
+  });
+
+  const [quarterlyChurnTarget, setQuarterlyChurnTarget] = useState<number>(() => {
+    const stored = localStorage.getItem('retentionCalculator');
+    return stored ? (JSON.parse(stored) as StoredRetentionData).quarterlyChurnTarget : 0;
+  });
+
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const initialRenderRef = useRef(true);
 
-  // Wrapper functions for setters to mark user interaction
   const handleMinRetentionChange = (value: number) => {
     setMinRetention(value);
     setHasUserInteracted(true);
@@ -69,15 +86,12 @@ const RetentionCalculator = () => {
   };
 
   useEffect(() => {
-    // Skip validation on initial render
     if (initialRenderRef.current) {
       initialRenderRef.current = false;
-      // Calculate values without showing errors
       calculateValues();
       return;
     }
 
-    // Only show errors after user has interacted with the form
     if (hasUserInteracted) {
       validateAndCalculate();
     } else {
@@ -136,10 +150,14 @@ const RetentionCalculator = () => {
       minRetention,
       maxRetention,
       bookARR,
-      churnARR
+      churnARR,
+      retentionRate,
+      attainment,
+      maxQuarterlyChurn,
+      quarterlyChurnTarget
     };
     localStorage.setItem('retentionCalculator', JSON.stringify(dataToStore));
-  }, [minRetention, maxRetention, bookARR, churnARR]);
+  }, [minRetention, maxRetention, bookARR, churnARR, retentionRate, attainment, maxQuarterlyChurn, quarterlyChurnTarget]);
 
   return <div className="min-h-screen bg-gradient-to-b from-white to-[#9b87f5]/5">
       <Header />

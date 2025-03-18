@@ -10,6 +10,8 @@ import { Header } from "./Header";
 interface StoredExpansionData {
   expansionARR: number;
   targetARR: number;
+  acceleratedARR: number; // Store raw accelerated ARR
+  attainment: number; // Store raw attainment
 }
 
 const ExpansionCalculator = () => {
@@ -23,8 +25,15 @@ const ExpansionCalculator = () => {
     return stored ? (JSON.parse(stored) as StoredExpansionData).expansionARR : 0;
   });
 
-  const [acceleratedARR, setAcceleratedARR] = useState<number>(0);
-  const [attainment, setAttainment] = useState<number>(0);
+  const [acceleratedARR, setAcceleratedARR] = useState<number>(() => {
+    const stored = localStorage.getItem('expansionCalculator');
+    return stored ? (JSON.parse(stored) as StoredExpansionData).acceleratedARR : 0;
+  });
+  
+  const [attainment, setAttainment] = useState<number>(() => {
+    const stored = localStorage.getItem('expansionCalculator');
+    return stored ? (JSON.parse(stored) as StoredExpansionData).attainment : 0;
+  });
 
   useEffect(() => {
     const calculateAcceleratedARR = () => {
@@ -63,18 +72,20 @@ const ExpansionCalculator = () => {
   useEffect(() => {
     const dataToStore: StoredExpansionData = {
       expansionARR,
-      targetARR
+      targetARR,
+      acceleratedARR,
+      attainment
     };
     localStorage.setItem('expansionCalculator', JSON.stringify(dataToStore));
-  }, [expansionARR, targetARR]);
+  }, [expansionARR, targetARR, acceleratedARR, attainment]);
 
   const getAccelerationText = () => {
     if (expansionARR <= targetARR) {
       return "Full amount @ 1x";
     } else if (expansionARR <= 2 * targetARR) {
-      return `Base ($${targetARR.toLocaleString()}) @ 1x\nExcess ($${(expansionARR - targetARR).toLocaleString()}) @ 1.5x`;
+      return `Base ($${Math.round(targetARR).toLocaleString()}) @ 1x\nExcess ($${Math.round(expansionARR - targetARR).toLocaleString()}) @ 1.5x`;
     } else {
-      return `Base ($${targetARR.toLocaleString()}) @ 1x\nNext $${targetARR.toLocaleString()} @ 1.5x\nRemaining ($${(expansionARR - 2 * targetARR).toLocaleString()}) @ 1x`;
+      return `Base ($${Math.round(targetARR).toLocaleString()}) @ 1x\nNext $${Math.round(targetARR).toLocaleString()} @ 1.5x\nRemaining ($${Math.round(expansionARR - 2 * targetARR).toLocaleString()}) @ 1x`;
     }
   };
 
@@ -164,7 +175,7 @@ const ExpansionCalculator = () => {
                         Accelerated ARR
                       </span>
                       <p className="text-3xl font-semibold tracking-tight text-[#8B5CF6]">
-                        ${acceleratedARR.toLocaleString()}
+                        ${Math.round(acceleratedARR).toLocaleString()}
                       </p>
                     </div>
                   </div>

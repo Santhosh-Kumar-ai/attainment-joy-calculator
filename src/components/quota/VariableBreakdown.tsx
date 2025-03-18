@@ -12,9 +12,14 @@ export const VariableBreakdown = ({
   retentionPercent,
   expansionPercent
 }: VariableBreakdownProps) => {
-  const quarterlyVariable = Math.round(variableComponent / 4);
-  const quarterlyRetention = Math.round(quarterlyVariable * retentionPercent);
-  const quarterlyExpansion = Math.round(quarterlyVariable * expansionPercent);
+  // Use raw values for calculations
+  const quarterlyVariable = variableComponent / 4;
+  const quarterlyRetention = quarterlyVariable * retentionPercent;
+  const quarterlyExpansion = quarterlyVariable * expansionPercent;
+  
+  // Format displayed values for UI
+  const formatNumber = (num: number) => Math.round(num).toLocaleString();
+  
   return <motion.div initial={{
     scale: 0.95,
     opacity: 0
@@ -27,7 +32,7 @@ export const VariableBreakdown = ({
           <div className="space-y-2 text-center">
             <h3 className="text-sm font-medium text-[#7E69AB]">Variable Component</h3>
             <p className="text-lg font-semibold text-[#1A1F2C]">
-              ₹{variableComponent.toLocaleString()}
+              ₹{formatNumber(variableComponent)}
             </p>
           </div>
           <div className="space-y-2 text-center">
@@ -42,15 +47,15 @@ export const VariableBreakdown = ({
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-sm font-medium text-[#7E69AB] w-1/2">Quarterly Variable</h3>
-              <p className="text-lg font-semibold text-[#1A1F2C] w-1/2 text-right">₹{quarterlyVariable.toLocaleString()}</p>
+              <p className="text-lg font-semibold text-[#1A1F2C] w-1/2 text-right">₹{formatNumber(quarterlyVariable)}</p>
             </div>
             <div className="flex justify-between items-center">
               <h3 className="text-sm font-medium text-[#7E69AB] w-1/2">Quarterly Retention ({(retentionPercent * 100).toFixed(1)}%)</h3>
-              <p className="text-lg font-semibold text-[#1A1F2C] w-1/2 text-right">₹{quarterlyRetention.toLocaleString()}</p>
+              <p className="text-lg font-semibold text-[#1A1F2C] w-1/2 text-right">₹{formatNumber(quarterlyRetention)}</p>
             </div>
             <div className="flex justify-between items-center">
               <h3 className="text-sm font-medium text-[#7E69AB] w-1/2">Quarterly Expansion ({(expansionPercent * 100).toFixed(1)}%)</h3>
-              <p className="text-lg font-semibold text-[#1A1F2C] w-1/2 text-right">₹{quarterlyExpansion.toLocaleString()}</p>
+              <p className="text-lg font-semibold text-[#1A1F2C] w-1/2 text-right">₹{formatNumber(quarterlyExpansion)}</p>
             </div>
           </div>
         </div>
