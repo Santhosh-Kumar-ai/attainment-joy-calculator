@@ -48,6 +48,7 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
   const [churnARR, setChurnARR] = useState<number>(0);
   const [expansionARR, setExpansionARR] = useState<number>(0);
   const [targetARR, setTargetARR] = useState<number>(0);
+  const [quarterlyVariable, setQuarterlyVariable] = useState<number>(0);
 
   useEffect(() => {
     try {
@@ -136,23 +137,31 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
             setCtc(ctc);
             const mixRatio = parsedData?.mixRatio || "75/25";
             const quotaMix = parsedData?.quotaMix || "70/30";
+            
+            const exactQuarterlyVariable = parsedData?.quarterlyVariable;
+            if (exactQuarterlyVariable !== undefined) {
+              setQuarterlyVariable(exactQuarterlyVariable);
+              setVariableComponent(exactQuarterlyVariable);
+            } else {
+              let variablePercentage = 0.25;
 
-            let variablePercentage = 0.25;
-
-            if (mixRatio && typeof mixRatio === 'string') {
-              if (mixRatio.startsWith('custom_')) {
-                const customVariable = parsedData?.customVariable || "25";
-                variablePercentage = parseInt(customVariable) / 100;
-              } else if (mixRatio.includes('/')) {
-                const parts = mixRatio.split('/');
-                if (parts.length > 1) {
-                  variablePercentage = parseInt(parts[1]) / 100;
+              if (mixRatio && typeof mixRatio === 'string') {
+                if (mixRatio.startsWith('custom_')) {
+                  const customVariable = parsedData?.customVariable || "25";
+                  variablePercentage = parseInt(customVariable) / 100;
+                } else if (mixRatio.includes('/')) {
+                  const parts = mixRatio.split('/');
+                  if (parts.length > 1) {
+                    variablePercentage = parseInt(parts[1]) / 100;
+                  }
                 }
               }
+              const variableComp = ctc * variablePercentage;
+              const quarterlyVar = Math.round(variableComp / 4);
+              setVariableComponent(quarterlyVar);
+              setQuarterlyVariable(quarterlyVar);
             }
-            const variableComp = ctc * variablePercentage;
-            const quarterlyVariable = variableComp / 4;
-            setVariableComponent(quarterlyVariable);
+            
             setQuotaMix(quotaMix);
 
             if (quotaMix && typeof quotaMix === 'string') {
@@ -181,12 +190,14 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
           } catch (error) {
             console.error("Error parsing quota data:", error);
             setVariableComponent(75000);
+            setQuarterlyVariable(75000);
             setQuotaMix("70/30");
             setRetentionPercent(0.7);
             setExpansionPercent(0.3);
           }
         } else {
           setVariableComponent(75000);
+          setQuarterlyVariable(75000);
           setQuotaMix("70/30");
           setRetentionPercent(0.7);
           setExpansionPercent(0.3);
@@ -201,8 +212,8 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
   }, []);
 
   useEffect(() => {
-    const quarterlyRetention = variableComponent * retentionPercent;
-    const quarterlyExpansion = variableComponent * expansionPercent;
+    const quarterlyRetention = quarterlyVariable * retentionPercent;
+    const quarterlyExpansion = quarterlyVariable * expansionPercent;
     
     const retCommission = quarterlyRetention * retentionAttainment;
     
@@ -222,7 +233,7 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
     if (total > 0 && onCalculationComplete) {
       onCalculationComplete();
     }
-  }, [retentionAttainment, expansionAttainment, variableComponent, retentionPercent, expansionPercent, quotaCredits, onCalculationComplete]);
+  }, [retentionAttainment, expansionAttainment, quarterlyVariable, retentionPercent, expansionPercent, quotaCredits, onCalculationComplete]);
 
   useEffect(() => {
     const dataToStore: StoredCommissionData = {
@@ -600,4 +611,3 @@ const CommissionCalculator = ({ onCalculationComplete }: CommissionCalculatorPro
 };
 
 export default CommissionCalculator;
-

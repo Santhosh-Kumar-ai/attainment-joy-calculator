@@ -18,6 +18,7 @@ interface StoredData {
   quotaMix: string;
   customRetention: string;
   customExpansion: string;
+  quarterlyVariable: number; // Add this field to store the exact quarterly variable
 }
 
 const QuotaCalculator = () => {
@@ -54,6 +55,17 @@ const QuotaCalculator = () => {
     return stored ? (JSON.parse(stored) as StoredData).customExpansion : "30";
   });
 
+  // Calculate the exact variable component and quarterly variable
+  const getVariablePercentage = () => {
+    if (mixRatio.startsWith('custom_')) {
+      return parseFloat(customVariable);
+    }
+    return parseInt(mixRatio.split('/')[1]);
+  };
+
+  const variableComponent = Math.round(ctc * getVariablePercentage() / 100);
+  const quarterlyVariable = Math.round(variableComponent / 4);
+
   useEffect(() => {
     const dataToStore: StoredData = {
       role,
@@ -63,17 +75,11 @@ const QuotaCalculator = () => {
       customVariable,
       quotaMix,
       customRetention,
-      customExpansion
+      customExpansion,
+      quarterlyVariable // Store the exact quarterly variable value
     };
     localStorage.setItem('quotaCalculator', JSON.stringify(dataToStore));
-  }, [role, ctc, mixRatio, customFixed, customVariable, quotaMix, customRetention, customExpansion]);
-
-  const getVariablePercentage = () => {
-    if (mixRatio.startsWith('custom_')) {
-      return parseFloat(customVariable);
-    }
-    return parseInt(mixRatio.split('/')[1]);
-  };
+  }, [role, ctc, mixRatio, customFixed, customVariable, quotaMix, customRetention, customExpansion, quarterlyVariable]);
 
   const getRetentionPercentage = () => {
     if (quotaMix.startsWith('custom_')) {
@@ -88,8 +94,6 @@ const QuotaCalculator = () => {
     }
     return parseInt(quotaMix.split('/')[1]) / 100;
   };
-
-  const variableComponent = Math.round(ctc * getVariablePercentage() / 100);
 
   const roleOptions = [{
     value: 'CSM',
